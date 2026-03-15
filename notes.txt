@@ -1,0 +1,5 @@
+Using two seperate docker-compose files one for production in EBS (ECS in the background) and the other for development
+
+docker-compose -f docker-compose-dev.yml up
+docker-compose -f docker-compose-dev.yml up --build
+docker-compose -f docker-compose-dev.yml down
