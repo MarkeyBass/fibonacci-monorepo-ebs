@@ -13,12 +13,16 @@ jobs:
       - run: docker build -t markeybass/react-test -f ./client/Dockerfile.dev ./client
       - run: docker run -e CI=true markeybass/react-test npm test
 
-      - run: docker build -t markeybass/multi-client ./client
-      - run: docker build -t markeybass/multi-nginx ./nginx
-      - run: docker build -t markeybass/multi-server ./server
-      - run: docker build -t markeybass/multi-worker ./worker
+      - run: docker build -t markeybass/multi-client:${{ github.sha }} -t markeybass/multi-client:latest ./client
+      - run: docker build -t markeybass/multi-nginx:${{ github.sha }} -t markeybass/multi-nginx:latest ./nginx
+      - run: docker build -t markeybass/multi-server:${{ github.sha }} -t markeybass/multi-server:latest ./server
+      - run: docker build -t markeybass/multi-worker:${{ github.sha }} -t markeybass/multi-worker:latest ./worker
 
-      - run: docker push markeybass/multi-client
-      - run: docker push markeybass/multi-nginx
-      - run: docker push markeybass/multi-server
-      - run: docker push markeybass/multi-worker
+      - run: docker push markeybass/multi-client:${{ github.sha }}
+      - run: docker push markeybass/multi-client:latest
+      - run: docker push markeybass/multi-nginx:${{ github.sha }}
+      - run: docker push markeybass/multi-nginx:latest
+      - run: docker push markeybass/multi-server:${{ github.sha }}
+      - run: docker push markeybass/multi-server:latest
+      - run: docker push markeybass/multi-worker:${{ github.sha }}
+      - run: docker push markeybass/multi-worker:latest
