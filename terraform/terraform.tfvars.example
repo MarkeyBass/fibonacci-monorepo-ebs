@@ -1,0 +1,26 @@
+aws_region = "us-east-1"
+
+resource_name_prefix               = "multi-docker-tf"
+elastic_beanstalk_application_name = "multi-docker-tf"
+elastic_beanstalk_environment_name = "multi-docker-tf-env"
+
+eb_instance_type = "t3.micro"
+
+# Leave empty to auto-generate a globally unique bucket name.
+deployment_bucket_name          = ""
+deployment_bucket_force_destroy = true
+
+db_instance_identifier = "multi-docker-tf-postgres"
+db_name                = "fibvalues"
+db_username            = "postgres"
+db_password            = "postgrespassword"
+db_allocated_storage   = 20
+db_instance_class      = "db.t3.micro"
+
+redis_replication_group_id = "multi-docker-tf-redis"
+redis_node_type            = "cache.t3.micro"
+
+tags = {
+  Owner   = "your-name"
+  Purpose = "terraform-learning"
+}
