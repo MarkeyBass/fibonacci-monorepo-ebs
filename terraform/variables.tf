@@ -4,6 +4,29 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "vpc_cidr_block" {
+  description = "CIDR block for the custom VPC."
+  type        = string
+  default     = "10.42.0.0/16"
+}
+
+variable "public_subnet_azs" {
+  description = "Availability zones used for public subnets."
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b"]
+}
+
+variable "public_subnet_cidr_blocks" {
+  description = "CIDR blocks for public subnets (must match public_subnet_azs length)."
+  type        = list(string)
+  default     = ["10.42.1.0/24", "10.42.2.0/24"]
+
+  validation {
+    condition     = length(var.public_subnet_cidr_blocks) >= 2
+    error_message = "Define at least two public subnets for multi-AZ resilience."
+  }
+}
+
 variable "resource_name_prefix" {
   description = "Prefix used for naming Terraform-managed resources."
   type        = string

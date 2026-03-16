@@ -3,6 +3,16 @@ output "aws_region" {
   value       = var.aws_region
 }
 
+output "vpc_id" {
+  description = "Custom VPC ID for this stack."
+  value       = aws_vpc.this.id
+}
+
+output "public_subnet_ids" {
+  description = "Public subnet IDs used by this stack."
+  value       = aws_subnet.public[*].id
+}
+
 output "elastic_beanstalk_application_name" {
   description = "Elastic Beanstalk application name."
   value       = aws_elastic_beanstalk_application.this.name

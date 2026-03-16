@@ -1,5 +1,15 @@
 aws_region = "us-east-1"
 
+vpc_cidr_block = "10.42.0.0/16"
+public_subnet_azs = [
+  "us-east-1a",
+  "us-east-1b"
+]
+public_subnet_cidr_blocks = [
+  "10.42.1.0/24",
+  "10.42.2.0/24"
+]
+
 resource_name_prefix               = "multi-docker-tf"
 elastic_beanstalk_application_name = "multi-docker-tf"
 elastic_beanstalk_environment_name = "multi-docker-tf-env"

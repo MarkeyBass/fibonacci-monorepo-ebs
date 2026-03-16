@@ -10,6 +10,8 @@ This path is designed for the Stephen Grider multi-container app flow:
 6. Read `06-networking-concepts-for-aws-and-terraform.md` for networking mental models and AWS/Terraform patterns.
 7. Run the hands-on lab in `07-apply-destroy-lab.md`.
 8. Finish with `08-ci-cd-alignment.md` to connect Terraform outputs to GitHub Actions deploy settings.
+9. Read `09-custom-vpc-and-vpc-networking-deep-dive.md` for the custom VPC migration and VPC-focused networking concepts.
+10. Continue with `10-phase-2-private-subnets-and-nat-next-steps.md` to plan the private-subnet + NAT migration path.
 
 ## What you will learn
 

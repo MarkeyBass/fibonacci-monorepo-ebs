@@ -20,17 +20,6 @@ data "aws_elastic_beanstalk_solution_stack" "docker" {
   name_regex  = "^64bit Amazon Linux (.*) running Docker$"
 }
 
-data "aws_vpc" "default" {
-  default = true
-}
-
-data "aws_subnets" "default_vpc_subnets" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
-}
-
 data "aws_iam_policy_document" "eb_ec2_assume_role" {
   statement {
     effect = "Allow"
@@ -62,7 +51,7 @@ data "aws_iam_policy_document" "eb_service_assume_role" {
 resource "aws_security_group" "multi_docker" {
   name        = "${var.resource_name_prefix}-sg"
   description = "Shared security group for EB, RDS, and Redis."
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = aws_vpc.this.id
 
   ingress {
     from_port = 5432
@@ -139,8 +128,8 @@ resource "aws_iam_role_policy_attachment" "eb_managed_updates" {
 }
 
 resource "aws_db_subnet_group" "postgres" {
-  name       = "${var.resource_name_prefix}-db-subnet-group"
-  subnet_ids = data.aws_subnets.default_vpc_subnets.ids
+  name       = "${var.resource_name_prefix}-db-subnet-group-v2"
+  subnet_ids = aws_subnet.public[*].id
   tags       = local.common_tags
 }
 
@@ -148,7 +137,7 @@ resource "aws_db_instance" "postgres" {
   identifier                   = var.db_instance_identifier
   allocated_storage            = var.db_allocated_storage
   engine                       = "postgres"
-  engine_version               = "16.3"
+  engine_version               = "16"
   instance_class               = var.db_instance_class
   db_name                      = var.db_name
   username                     = var.db_username
@@ -170,7 +159,7 @@ resource "aws_db_instance" "postgres" {
 
 resource "aws_elasticache_subnet_group" "redis" {
   name       = "${var.resource_name_prefix}-redis-subnets"
-  subnet_ids = data.aws_subnets.default_vpc_subnets.ids
+  subnet_ids = aws_subnet.public[*].id
 }
 
 resource "aws_elasticache_replication_group" "redis" {
@@ -221,6 +210,30 @@ resource "aws_elastic_beanstalk_environment" "this" {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.eb_ec2_profile.name
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "VPCId"
+    value     = aws_vpc.this.id
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "Subnets"
+    value     = join(",", aws_subnet.public[*].id)
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "AssociatePublicIpAddress"
+    value     = "true"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "DisableDefaultEC2SecurityGroup"
+    value     = "true"
   }
 
   setting {
