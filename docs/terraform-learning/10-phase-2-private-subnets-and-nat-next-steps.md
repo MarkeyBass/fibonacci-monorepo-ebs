@@ -163,7 +163,34 @@ Lab recommendation:
 
 ---
 
-## 7) Common failure patterns in Phase 2
+## 7) HTTPS target architecture in Phase 2 (ALB + ACM)
+
+Phase 2 is where HTTPS should become first-class.
+
+Recommended model:
+
+1. Use a load-balanced EB environment.
+2. Place ALB in public subnets.
+3. Place app instances in private app subnets.
+4. Attach ACM certificate to ALB `443` listener.
+5. Redirect `80 -> 443` at ALB.
+6. Forward to app target on `80` (or `443` if you need end-to-end TLS).
+
+Why this model:
+
+- No certificate private keys on app instances.
+- Cert renewals are managed by ACM.
+- Cleaner separation between internet edge and private runtime.
+
+Security group pattern:
+
+- ALB SG: allow inbound `80/443` from internet.
+- App SG: allow inbound app port only from ALB SG.
+- DB/cache SGs: allow only from app SG on exact ports.
+
+---
+
+## 8) Common failure patterns in Phase 2
 
 If something breaks, check these first:
 
@@ -180,7 +207,7 @@ If something breaks, check these first:
 
 ---
 
-## 8) Suggested mini-labs (to internalize concepts)
+## 9) Suggested mini-labs (to internalize concepts)
 
 Run these as focused experiments:
 
@@ -197,7 +224,7 @@ Learning from controlled failure is the fastest way to master networking.
 
 ---
 
-## 9) Phase 2 done definition
+## 10) Phase 2 done definition
 
 You can consider Phase 2 complete when:
 
@@ -211,7 +238,7 @@ At that point, your network is no longer "default AWS behavior"; it is your desi
 
 ---
 
-## 10) Optional Phase 3 preview
+## 11) Optional Phase 3 preview
 
 After Phase 2, good next topics:
 

@@ -201,7 +201,51 @@ Cons:
 
 ---
 
-## 9) Upgrade path from here (preview)
+## 9) HTTPS in Step 1 vs production
+
+Your current `main.tf` security group allows inbound `80` and `443` from the internet.
+
+Important:
+
+- Opening `443` in SG **does not** create SSL certificates.
+- Opening `443` in SG **does not** terminate TLS by itself.
+
+What this means in practice:
+
+- SG rules only permit network traffic.
+- You still need a certificate + TLS termination point.
+
+### Current Step 1 (single-instance) HTTPS path
+
+Use this when you want minimal changes:
+
+1. Keep EB in single-instance mode.
+2. Keep `80` and `443` ingress on the instance SG.
+3. Configure TLS directly in your instance-level nginx container.
+4. Provide certificate/key to nginx (manually or via automation).
+
+Trade-off:
+
+- Works for learning, but cert lifecycle and key handling on instance are operationally heavier.
+
+### Production-style HTTPS path (recommended)
+
+Use this as you move to Phase 2:
+
+1. Move to load-balanced EB environment.
+2. Attach ACM certificate to ALB `443` listener.
+3. Terminate TLS at ALB.
+4. Forward ALB traffic to app instances on `80` (or re-encrypt if desired).
+
+Benefits:
+
+- managed cert lifecycle with ACM
+- cleaner edge security model
+- easier scaling and operational hygiene
+
+---
+
+## 10) Upgrade path from here (preview)
 
 When you are ready for deeper networking:
 
@@ -217,7 +261,7 @@ This is covered in:
 
 ---
 
-## 10) Mental model to keep forever
+## 11) Mental model to keep forever
 
 When debugging any AWS networking issue, ask in this order:
 
